@@ -129,17 +129,34 @@ var photos = getPhotos();
 
 renderPhotos(pictureTemplate, picturesContainer, photos);
 
+var createCommentPicture = function (comment) {
+  var commentPicture = document.createElement('img');
+  commentPicture.classList.add('social__picture');
+  commentPicture.src = comment.avatar;
+  commentPicture.alt = comment.name;
+  commentPicture.width = 35;
+  commentPicture.height = 35;
+
+  return commentPicture;
+};
+
+var createCommentText = function (message) {
+  var commentText = document.createElement('p');
+  commentText.classList.add('social__text');
+  commentText.textContent = message;
+
+  return commentText;
+};
+
 var createPhotoComment = function (comment) {
   var commentElement = document.createElement('li');
   commentElement.classList.add('social__comment');
 
-  commentElement.innerHTML =
-    '<img '
-    + 'class="social__picture"'
-    + 'src="' + comment.avatar + '"'
-    + 'alt="' + comment.name + '"'
-    + 'width="35" height="35">'
-  + '<p class="social__text">' + comment.message + '</p>';
+  var commentPictureElement = createCommentPicture(comment);
+  var commentTextElement = createCommentText(comment.message);
+
+  commentElement.appendChild(commentPictureElement);
+  commentElement.appendChild(commentTextElement);
 
   return commentElement;
 };
