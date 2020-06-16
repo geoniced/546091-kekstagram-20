@@ -56,6 +56,8 @@ var FILTER_VALUES = {
   }
 };
 
+var HASHTAG_REGEXP = /^#[a-zA-Zа-яА-Я0-9]{1,20}$/;
+
 var getDescription = function () {
   // TODO
   return '';
@@ -242,6 +244,7 @@ var hideComments = function () {
 
 var uploadFileInput = document.querySelector('#upload-file');
 var uploadCancelBtn = document.querySelector('#upload-cancel');
+var uploadForm = document.querySelector('#upload-select-image');
 
 var imgUploadOverlay = document.querySelector('.img-upload__overlay');
 var imgUploadPreview = imgUploadOverlay.querySelector('.img-upload__preview img');
@@ -252,6 +255,8 @@ var effectLevelPin = effectLevelLine.querySelector('.effect-level__pin');
 var effectLevelDepth = effectLevelLine.querySelector('.effect-level__depth');
 
 var effectsList = document.querySelector('.effects__list');
+
+var hashtagsInput = document.querySelector('.text__hashtags');
 
 var onImgEditPopupPress = function (evt) {
   if (evt.key === 'Escape') {
@@ -312,6 +317,7 @@ var closeImgEditPopup = function () {
   effectsList.removeEventListener('change', onEffectsChange);
 
   uploadFileInput.value = '';
+  hashtagsInput.value = '';
 };
 
 var getFilterData = function (filterType) {
@@ -360,10 +366,47 @@ var changeFilter = function (percent, filterType) {
   setFilterLevel(percent);
 };
 
+var isValidHashtag = function (hashtag) {
+  return HASHTAG_REGEXP.test(hashtag);
+};
+
+var isValidHashtagInput = function () {
+  var hashtags = hashtagsInput.value.split(' ');
+  var isValidInput = true;
+  var usedHashtags = {};
+
+  if (hashtags.length === 1 && hashtags[0] === "") {
+    return true;
+  }
+
+  for (var i = 0; i < hashtags.length; i++) {
+    var hashtag = hashtags[i];
+
+    if (isValidHashtag(hashtag) && !usedHashtags[hashtag.toLowerCase()]) {
+      usedHashtags[hashtag.toLowerCase()] = true;
+    } else {
+      isValidInput = false;
+      break;
+    }
+  }
+
+  return isValidInput;
+};
+
 uploadFileInput.addEventListener('change', function () {
   openImgEditPopup();
 });
 
+// TODO: should be in openImgEditPopup
 uploadCancelBtn.addEventListener('click', function () {
   closeImgEditPopup();
+});
+
+uploadForm.addEventListener('submit', function (evt) {
+  if (isValidHashtagInput()) {
+    hashtagsInput.setCustomValidity('');
+  } else {
+    evt.preventDefault();
+    hashtagsInput.setCustomValidity('Ошибка заполнения поля хэштегов');
+  }
 });
