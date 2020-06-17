@@ -303,12 +303,23 @@ var onEffectsChange = function (evt) {
   }
 };
 
+var onUploadCancelBtnClick = function () {
+  closeImgEditPopup();
+};
+
+var onHashtagsInput = function () {
+  var validityMessage = validateHashtagInput();
+  hashtagsInput.setCustomValidity(validityMessage);
+};
+
 var openImgEditPopup = function () {
   imgUploadOverlay.classList.remove('hidden');
 
   document.addEventListener('keydown', onImgEditPopupPress);
   effectLevelPin.addEventListener('mouseup', onLevelPinMouseUp);
   effectsList.addEventListener('change', onEffectsChange);
+  uploadCancelBtn.addEventListener('click', onUploadCancelBtnClick);
+  hashtagsInput.addEventListener('input', onHashtagsInput);
 };
 
 var closeImgEditPopup = function () {
@@ -317,6 +328,8 @@ var closeImgEditPopup = function () {
   document.removeEventListener('keydown', onImgEditPopupPress);
   effectLevelPin.removeEventListener('mouseup', onLevelPinMouseUp);
   effectsList.removeEventListener('change', onEffectsChange);
+  uploadCancelBtn.removeEventListener('click', onUploadCancelBtnClick);
+  hashtagsInput.removeEventListener('input', onHashtagsInput);
 
   uploadFileInput.value = '';
   hashtagsInput.value = '';
@@ -404,12 +417,4 @@ uploadFileInput.addEventListener('change', function () {
   openImgEditPopup();
 });
 
-// TODO: should be in openImgEditPopup
-uploadCancelBtn.addEventListener('click', function () {
-  closeImgEditPopup();
-});
 
-hashtagsInput.addEventListener('input', function () {
-  var validityMessage = validateHashtagInput();
-  hashtagsInput.setCustomValidity(validityMessage);
-});
