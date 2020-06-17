@@ -57,6 +57,7 @@ var FILTER_VALUES = {
 };
 
 var HASHTAG_REGEXP = /^#[a-zA-Zа-яА-Я0-9]{1,20}$/;
+var HASHTAGS_MAX_AMOUNT = 5;
 
 var getDescription = function () {
   // TODO
@@ -259,7 +260,7 @@ var effectsList = document.querySelector('.effects__list');
 var hashtagsInput = document.querySelector('.text__hashtags');
 
 var onImgEditPopupPress = function (evt) {
-  if (evt.key === 'Escape') {
+  if (evt.key === 'Escape' && evt.target !== hashtagsInput) {
     closeImgEditPopup();
   }
 };
@@ -370,13 +371,18 @@ var isValidHashtag = function (hashtag) {
   return HASHTAG_REGEXP.test(hashtag);
 };
 
-var isValidHashtagInput = function () {
+var validateHashtagInput = function () {
   var hashtags = hashtagsInput.value.split(' ');
-  var isValidInput = true;
   var usedHashtags = {};
+  var isEmptyField = hashtags.length === 1 && hashtags[0] === '';
+  var validityMessage = '';
 
-  if (hashtags.length === 1 && hashtags[0] === "") {
-    return true;
+  if (isEmptyField) {
+    return validityMessage;
+  }
+
+  if (hashtags.length > HASHTAGS_MAX_AMOUNT) {
+    return 'Количество хэш-тегов не должно быть больше пяти!';
   }
 
   for (var i = 0; i < hashtags.length; i++) {
@@ -385,12 +391,12 @@ var isValidHashtagInput = function () {
     if (isValidHashtag(hashtag) && !usedHashtags[hashtag.toLowerCase()]) {
       usedHashtags[hashtag.toLowerCase()] = true;
     } else {
-      isValidInput = false;
+      validityMessage = 'Ошибка написания хэш-тегов';
       break;
     }
   }
 
-  return isValidInput;
+  return validityMessage;
 };
 
 uploadFileInput.addEventListener('change', function () {
@@ -402,11 +408,7 @@ uploadCancelBtn.addEventListener('click', function () {
   closeImgEditPopup();
 });
 
-uploadForm.addEventListener('submit', function (evt) {
-  if (isValidHashtagInput()) {
-    hashtagsInput.setCustomValidity('');
-  } else {
-    evt.preventDefault();
-    hashtagsInput.setCustomValidity('Ошибка заполнения поля хэштегов');
-  }
+hashtagsInput.addEventListener('input', function () {
+  var validityMessage = validateHashtagInput();
+  hashtagsInput.setCustomValidity(validityMessage);
 });
