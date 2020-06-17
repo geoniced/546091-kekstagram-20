@@ -161,6 +161,7 @@ var picturesContainer = document.querySelector('.pictures');
 var photos = getPhotos();
 
 renderPhotos(pictureTemplate, picturesContainer, photos);
+/*
 
 var createCommentPicture = function (comment) {
   var commentPicture = document.createElement('img');
@@ -240,12 +241,12 @@ var hideComments = function () {
   commentsCounter.classList.add('hidden');
   commentsLoader.classList.add('hidden');
 };
+*/
 
 // hideComments(); // Until 2nd task
 
 var uploadFileInput = document.querySelector('#upload-file');
 var uploadCancelBtn = document.querySelector('#upload-cancel');
-var uploadForm = document.querySelector('#upload-select-image');
 
 var imgUploadOverlay = document.querySelector('.img-upload__overlay');
 var imgUploadPreview = imgUploadOverlay.querySelector('.img-upload__preview img');
