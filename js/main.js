@@ -251,6 +251,7 @@ var uploadCancelBtn = document.querySelector('#upload-cancel');
 var imgUploadOverlay = document.querySelector('.img-upload__overlay');
 var imgUploadPreview = imgUploadOverlay.querySelector('.img-upload__preview img');
 
+var effectLevel = document.querySelector('.img-upload__effect-level');
 var effectLevelInput = document.querySelector('.effect-level__value');
 var effectLevelLine = document.querySelector('.effect-level__line');
 var effectLevelPin = effectLevelLine.querySelector('.effect-level__pin');
@@ -315,6 +316,8 @@ var onHashtagsInput = function () {
 var openImgEditPopup = function () {
   imgUploadOverlay.classList.remove('hidden');
 
+  changeFilter(effectLevelInput.value, 'none');
+
   document.addEventListener('keydown', onImgEditPopupPress);
   effectLevelPin.addEventListener('mouseup', onLevelPinMouseUp);
   effectsList.addEventListener('change', onEffectsChange);
@@ -373,6 +376,11 @@ var setFilterLevel = function (percent) {
 };
 
 var changeFilter = function (percent, filterType) {
+  if (filterType === 'none') {
+    effectLevel.classList.add('hidden');
+  } else {
+    effectLevel.classList.remove('hidden');
+  }
   effectLevelInput.value = percent;
 
   imgUploadPreview.className = '';
