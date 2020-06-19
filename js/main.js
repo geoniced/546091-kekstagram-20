@@ -282,9 +282,10 @@ var effectLevelDepth = effectLevelLine.querySelector('.effect-level__depth');
 var effectsList = document.querySelector('.effects__list');
 
 var hashtagsInput = document.querySelector('.text__hashtags');
+var hashtagsCommentInput = document.querySelector('.text__description');
 
 var onImgEditPopupPress = function (evt) {
-  if (evt.key === 'Escape' && evt.target !== hashtagsInput) {
+  if (evt.key === 'Escape' && evt.target !== hashtagsInput && evt.target !== hashtagsCommentInput) {
     closeImgEditPopup();
   }
 };
