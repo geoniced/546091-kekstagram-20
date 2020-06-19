@@ -134,23 +134,13 @@ var getPhotos = function () {
   return photos;
 };
 
-var onPictureClick = function (photo) {
-  return function (evt) {
-    evt.preventDefault();
-
-    showPicture(bigPicture, photo);
-    hideComments();
-  };
-};
-
-var createPhotoElement = function (photo, template) {
+var createPhotoElement = function (photo, template, pictureIndex) {
   var pictureElement = template.cloneNode(true);
 
   pictureElement.querySelector('.picture__img').src = photo.url;
   pictureElement.querySelector('.picture__likes').textContent = photo.likes;
   pictureElement.querySelector('.picture__comments').textContent = photo.comments.length;
-
-  pictureElement.addEventListener('click', onPictureClick(photo));
+  pictureElement.dataset.pictureId = pictureIndex;
 
   return pictureElement;
 };
@@ -159,7 +149,7 @@ var renderPhotos = function (template, container, photos) {
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < photos.length; i++) {
-    fragment.appendChild(createPhotoElement(photos[i], template));
+    fragment.appendChild(createPhotoElement(photos[i], template, i));
   }
 
   container.appendChild(fragment);
@@ -265,6 +255,7 @@ var showPicture = function (picture, photo) {
   document.addEventListener('keydown', onBigPicturePress);
 
   renderPictureInformation(picture, photo);
+  hideComments();
 };
 
 var hideComments = function () {
@@ -454,6 +445,13 @@ var validateHashtagInput = function () {
 
 uploadFileInput.addEventListener('change', function () {
   openImgEditPopup();
+});
+
+picturesContainer.addEventListener('click', function (evt) {
+  var picture = evt.target.closest('.picture');
+  if (picture) {
+    showPicture(bigPicture, photos[picture.dataset.pictureId]);
+  }
 });
 
 renderPhotos(pictureTemplate, picturesContainer, photos);
