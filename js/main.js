@@ -307,12 +307,7 @@ var getPinPosition = function (levelLine, eventX) {
 };
 
 var onLevelPinMouseUp = function (evt) {
-  var imageFilterClass = imgUploadPreview.className;
-  var currentFilter = 'none';
-
-  if (imageFilterClass && imageFilterClass.indexOf('none') === -1) {
-    currentFilter = imageFilterClass.slice(imageFilterClass.indexOf('--') + 2);
-  }
+  var currentFilter = imgUploadPreview.dataset.currentFilter;
 
   // Походу это в этом задании делать не нужно было :P Сложное описание
   var linePinPosition = getPinPosition(effectLevelLine, evt.x);
@@ -407,6 +402,7 @@ var changeFilter = function (percent, filterType) {
 
   imgUploadPreview.className = '';
   imgUploadPreview.classList.add('effects__preview--' + filterType);
+  imgUploadPreview.dataset.currentFilter = filterType;
   setFilterSettings(percent, filterType);
   setFilterLevel(percent);
 };
