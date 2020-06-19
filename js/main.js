@@ -205,6 +205,14 @@ var createPhotoComment = function (comment) {
   return commentElement;
 };
 
+var removeParentChildren = function (parent) {
+  var children = parent.children;
+
+  while (children.length > 0) {
+    parent.removeChild(children[0]);
+  }
+};
+
 var renderPhotoComments = function (comments, container) {
   var fragment = document.createDocumentFragment();
 
@@ -212,7 +220,7 @@ var renderPhotoComments = function (comments, container) {
     fragment.appendChild(createPhotoComment(comments[i]));
   }
 
-  container.innerHTML = '';
+  removeParentChildren(container);
   container.appendChild(fragment);
 };
 
