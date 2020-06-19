@@ -446,6 +446,7 @@ uploadFileInput.addEventListener('change', function () {
 picturesContainer.addEventListener('click', function (evt) {
   var picture = evt.target.closest('.picture');
   if (picture) {
+    evt.preventDefault();
     showPicture(bigPicture, photos[picture.dataset.pictureId]);
   }
 });
