@@ -79,7 +79,7 @@ var getLikesCount = function () {
 
 var getRandomIndex = function (array) {
   var length = array.length;
-  var index = Math.round(Math.random() * length);
+  var index = Math.round(Math.random() * length - 1);
 
   return index;
 };
@@ -134,12 +134,13 @@ var getPhotos = function () {
   return photos;
 };
 
-var createPhotoElement = function (photo, template) {
+var createPhotoElement = function (photo, template, pictureIndex) {
   var pictureElement = template.cloneNode(true);
 
   pictureElement.querySelector('.picture__img').src = photo.url;
   pictureElement.querySelector('.picture__likes').textContent = photo.likes;
   pictureElement.querySelector('.picture__comments').textContent = photo.comments.length;
+  pictureElement.dataset.pictureId = pictureIndex;
 
   return pictureElement;
 };
@@ -148,7 +149,7 @@ var renderPhotos = function (template, container, photos) {
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < photos.length; i++) {
-    fragment.appendChild(createPhotoElement(photos[i], template));
+    fragment.appendChild(createPhotoElement(photos[i], template, i));
   }
 
   container.appendChild(fragment);
@@ -159,9 +160,8 @@ var pictureTemplate = document.querySelector('#picture')
     .querySelector('.picture');
 var picturesContainer = document.querySelector('.pictures');
 var photos = getPhotos();
-
-renderPhotos(pictureTemplate, picturesContainer, photos);
-/*
+var bigPicture = document.querySelector('.big-picture');
+var bigPictureCancel = bigPicture.querySelector('.big-picture__cancel');
 
 var createCommentPicture = function (comment) {
   var commentPicture = document.createElement('img');
@@ -195,6 +195,14 @@ var createPhotoComment = function (comment) {
   return commentElement;
 };
 
+var removeParentChildren = function (parent) {
+  var children = parent.children;
+
+  while (children.length > 0) {
+    parent.removeChild(children[0]);
+  }
+};
+
 var renderPhotoComments = function (comments, container) {
   var fragment = document.createDocumentFragment();
 
@@ -202,7 +210,7 @@ var renderPhotoComments = function (comments, container) {
     fragment.appendChild(createPhotoComment(comments[i]));
   }
 
-  container.innerHTML = '';
+  removeParentChildren(container);
   container.appendChild(fragment);
 };
 
@@ -221,18 +229,34 @@ var renderPictureInformation = function (picture, photo) {
   renderPhotoComments(photo.comments, pictureComments);
 };
 
-var showPicture = function (picture, photo) {
-  picture.classList.remove('hidden');
-
-  renderPictureInformation(picture, photo);
-
-  document.body.classList.add('modal-open');
+var onBigPictureCloseClick = function () {
+  closePicture();
 };
 
-var bigPicture = document.querySelector('.big-picture');
-var firstPhoto = photos[0];
+var onBigPicturePress = function (evt) {
+  if (evt.key === 'Escape') {
+    closePicture();
+  }
+};
 
-// showPicture(bigPicture, firstPhoto); // until 2nd task
+var closePicture = function () {
+  bigPicture.classList.add('hidden');
+  document.body.classList.remove('modal-open');
+
+  bigPictureCancel.removeEventListener('click', onBigPictureCloseClick);
+  document.removeEventListener('keydown', onBigPicturePress);
+};
+
+var showPicture = function (picture, photo) {
+  picture.classList.remove('hidden');
+  document.body.classList.add('modal-open');
+
+  bigPictureCancel.addEventListener('click', onBigPictureCloseClick);
+  document.addEventListener('keydown', onBigPicturePress);
+
+  renderPictureInformation(picture, photo);
+  hideComments();
+};
 
 var hideComments = function () {
   var commentsCounter = document.querySelector('.social__comment-count');
@@ -241,9 +265,6 @@ var hideComments = function () {
   commentsCounter.classList.add('hidden');
   commentsLoader.classList.add('hidden');
 };
-*/
-
-// hideComments(); // Until 2nd task
 
 var uploadFileInput = document.querySelector('#upload-file');
 var uploadCancelBtn = document.querySelector('#upload-cancel');
@@ -260,9 +281,10 @@ var effectLevelDepth = effectLevelLine.querySelector('.effect-level__depth');
 var effectsList = document.querySelector('.effects__list');
 
 var hashtagsInput = document.querySelector('.text__hashtags');
+var hashtagsCommentInput = document.querySelector('.text__description');
 
 var onImgEditPopupPress = function (evt) {
-  if (evt.key === 'Escape' && evt.target !== hashtagsInput) {
+  if (evt.key === 'Escape' && evt.target !== hashtagsInput && evt.target !== hashtagsCommentInput) {
     closeImgEditPopup();
   }
 };
@@ -285,12 +307,7 @@ var getPinPosition = function (levelLine, eventX) {
 };
 
 var onLevelPinMouseUp = function (evt) {
-  var imageFilterClass = imgUploadPreview.className;
-  var currentFilter = 'none';
-
-  if (imageFilterClass && imageFilterClass.indexOf('none') === -1) {
-    currentFilter = imageFilterClass.slice(imageFilterClass.indexOf('--') + 2);
-  }
+  var currentFilter = imgUploadPreview.dataset.currentFilter;
 
   // Походу это в этом задании делать не нужно было :P Сложное описание
   var linePinPosition = getPinPosition(effectLevelLine, evt.x);
@@ -385,6 +402,7 @@ var changeFilter = function (percent, filterType) {
 
   imgUploadPreview.className = '';
   imgUploadPreview.classList.add('effects__preview--' + filterType);
+  imgUploadPreview.dataset.currentFilter = filterType;
   setFilterSettings(percent, filterType);
   setFilterLevel(percent);
 };
@@ -425,4 +443,12 @@ uploadFileInput.addEventListener('change', function () {
   openImgEditPopup();
 });
 
+picturesContainer.addEventListener('click', function (evt) {
+  var picture = evt.target.closest('.picture');
+  if (picture) {
+    evt.preventDefault();
+    showPicture(bigPicture, photos[picture.dataset.pictureId]);
+  }
+});
 
+renderPhotos(pictureTemplate, picturesContainer, photos);
