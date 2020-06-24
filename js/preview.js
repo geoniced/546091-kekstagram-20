@@ -1,6 +1,7 @@
 'use strict';
 
 window.preview = (function () {
+  var picturesContainer = document.querySelector('.pictures');
   var bigPicture = document.querySelector('.big-picture');
   var bigPictureCancel = bigPicture.querySelector('.big-picture__cancel');
 
@@ -107,7 +108,17 @@ window.preview = (function () {
     hideComments();
   };
 
+  var createPictureContainerHandler = function (photos) {
+    picturesContainer.addEventListener('click', function (evt) {
+      var picture = evt.target.closest('.picture');
+      if (picture) {
+        evt.preventDefault();
+        showPicture(bigPicture, photos[picture.dataset.pictureId]);
+      }
+    });
+  };
+
   return {
-    showPicture: showPicture
+    createPictureContainerHandler: createPictureContainerHandler
   };
 })();
