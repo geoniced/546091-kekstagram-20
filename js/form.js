@@ -57,13 +57,27 @@ window.form = (function () {
     return pinPosition;
   };
 
-  var onLevelPinMouseUp = function (evt) {
+  var onLevelPinMouseDown = function (evt) {
+    evt.preventDefault();
+
     var currentFilter = imgUploadPreview.dataset.currentFilter;
 
-    // Походу это в этом задании делать не нужно было :P Сложное описание
-    var linePinPosition = getPinPosition(effectLevelLine, evt.x);
+    var onLevelPinMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
 
-    changeFilter(linePinPosition, currentFilter);
+      var linePinPosition = getPinPosition(effectLevelLine, moveEvt.x);
+      changeFilter(linePinPosition, currentFilter);
+    };
+
+    var onLevelPinMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      document.removeEventListener('mousemove', onLevelPinMouseMove);
+      document.removeEventListener('mouseup', onLevelPinMouseUp);
+    };
+
+    document.addEventListener('mousemove', onLevelPinMouseMove);
+    document.addEventListener('mouseup', onLevelPinMouseUp);
   };
 
   var onEffectsChange = function (evt) {
@@ -87,7 +101,7 @@ window.form = (function () {
     changeFilter(effectLevelInput.value, 'none');
 
     document.addEventListener('keydown', onImgEditPopupPress);
-    effectLevelPin.addEventListener('mouseup', onLevelPinMouseUp);
+    effectLevelPin.addEventListener('mousedown', onLevelPinMouseDown);
     effectsList.addEventListener('change', onEffectsChange);
     uploadCancelBtn.addEventListener('click', onUploadCancelBtnClick);
     hashtagsInput.addEventListener('input', onHashtagsInput);
@@ -97,7 +111,7 @@ window.form = (function () {
     imgUploadOverlay.classList.add('hidden');
 
     document.removeEventListener('keydown', onImgEditPopupPress);
-    effectLevelPin.removeEventListener('mouseup', onLevelPinMouseUp);
+    effectLevelPin.removeEventListener('mousedown', onLevelPinMouseDown);
     effectsList.removeEventListener('change', onEffectsChange);
     uploadCancelBtn.removeEventListener('click', onUploadCancelBtnClick);
     hashtagsInput.removeEventListener('input', onHashtagsInput);
@@ -138,7 +152,7 @@ window.form = (function () {
 
   // Пока мне кажется, что это достаточно удобно
   var setFilterLevel = function (percent) {
-    effectLevelInput.value = percent;
+    effectLevelInput.value = Math.round(percent);
     effectLevelPin.style.left = percent + '%';
     effectLevelDepth.style.width = percent + '%';
   };
@@ -149,7 +163,6 @@ window.form = (function () {
     } else {
       effectLevel.classList.remove('hidden');
     }
-    effectLevelInput.value = percent;
 
     imgUploadPreview.className = '';
     imgUploadPreview.classList.add('effects__preview--' + filterType);
