@@ -35,9 +35,10 @@ window.form = (function () {
   var HASHTAGS_MAX_AMOUNT = 5;
 
   var onImgEditPopupPress = function (evt) {
-    if (evt.key === 'Escape' && evt.target !== hashtagsInput && evt.target !== hashtagsCommentInput) {
+    window.util.isEscEvent(evt, function (escEvent) {
+      escEvent.preventDefault();
       closeImgEditPopup();
-    }
+    }, [hashtagsInput, hashtagsCommentInput]);
   };
 
   var getPinPosition = function (levelLine, eventX) {
@@ -95,6 +96,22 @@ window.form = (function () {
     hashtagsInput.setCustomValidity(validityMessage);
   };
 
+  var onFormSubmitSuccess = function () {
+    closeImgEditPopup();
+    window.notification.showSuccessNotification();
+  };
+
+  var onFormSubmitError = function () {
+    closeImgEditPopup();
+    window.notification.showErrorNotification();
+  };
+
+  var onImgUploadFormSubmit = function (evt) {
+    evt.preventDefault();
+
+    window.backend.save(new FormData(imgUploadForm), onFormSubmitSuccess, onFormSubmitError);
+  };
+
   var openImgEditPopup = function () {
     imgUploadOverlay.classList.remove('hidden');
 
@@ -105,6 +122,8 @@ window.form = (function () {
     effectsList.addEventListener('change', onEffectsChange);
     uploadCancelBtn.addEventListener('click', onUploadCancelBtnClick);
     hashtagsInput.addEventListener('input', onHashtagsInput);
+
+    imgUploadForm.addEventListener('submit', onImgUploadFormSubmit);
   };
 
   var closeImgEditPopup = function () {
@@ -115,9 +134,11 @@ window.form = (function () {
     effectsList.removeEventListener('change', onEffectsChange);
     uploadCancelBtn.removeEventListener('click', onUploadCancelBtnClick);
     hashtagsInput.removeEventListener('input', onHashtagsInput);
+    imgUploadForm.removeEventListener('submit', onImgUploadFormSubmit);
 
     uploadFileInput.value = '';
     hashtagsInput.value = '';
+    hashtagsCommentInput.value = '';
   };
 
   var getFilterData = function (filterType) {
@@ -203,6 +224,7 @@ window.form = (function () {
     return validityMessage;
   };
 
+  var imgUploadForm = document.querySelector('.img-upload__form');
   var uploadFileInput = document.querySelector('#upload-file');
   var uploadCancelBtn = document.querySelector('#upload-cancel');
 

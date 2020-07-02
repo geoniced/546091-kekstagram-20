@@ -2,7 +2,8 @@
 
 window.backend = (function () {
   var URL = {
-    'GET': 'https://javascript.pages.academy/kekstagram/data'
+    'GET': 'https://javascript.pages.academy/kekstagram/data',
+    'POST': 'https://javascript.pages.academy/kekstagram'
   };
 
   var STATUS_CODES = {
@@ -46,7 +47,22 @@ window.backend = (function () {
     xhr.send();
   };
 
+  var save = function (data, onLoad, onError) {
+    var xhr = new XMLHttpRequest();
+    xhr.responseType = 'json';
+
+    addOnRequestLoad(xhr, onLoad, onError);
+    addOnRequestError(xhr, onError);
+    addOnRequestTimeout(xhr, onError);
+
+    xhr.timeout = TIMEOUT_IN_MS;
+
+    xhr.open('POST', URL.POST);
+    xhr.send(data);
+  };
+
   return {
-    load: load
+    load: load,
+    save: save
   };
 })();
