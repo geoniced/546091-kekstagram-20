@@ -76,9 +76,10 @@ window.preview = (function () {
   };
 
   var onBigPicturePress = function (evt) {
-    if (evt.key === 'Escape') {
+    window.util.isEscEvent(evt, function (escEvent) {
+      escEvent.preventDefault();
       closePicture();
-    }
+    });
   };
 
   var closePicture = function () {
