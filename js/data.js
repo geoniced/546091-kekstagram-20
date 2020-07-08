@@ -13,11 +13,8 @@ window.data = (function () {
     return photos;
   };
 
-  var loadPhotos = function (pictureTemplate, picturesContainer) {
-    window.backend.load(function (photos) {
-      window.gallery.renderPhotos(pictureTemplate, picturesContainer, photos);
-      window.preview.createPictureContainerHandler(photos);
-    });
+  var loadPhotos = function () {
+    window.backend.load(window.gallery.onPhotosLoad);
   };
 
   return {
