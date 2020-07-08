@@ -18,16 +18,18 @@ window.util = (function () {
 
   var getRandomIndex = function (array) {
     var length = array.length;
-    var index = Math.round(Math.random() * length - 1);
+    var index = Math.round(Math.random() * (length - 1));
 
     return index;
   };
 
   var getRandomItem = function (randomArray, array) {
-    var randomItem = array[getRandomIndex(array)];
+    var randomIndex = getRandomIndex(array);
+    var randomItem = array[randomIndex];
 
     while (randomArray.indexOf(randomItem) !== -1) {
-      randomItem = array[getRandomIndex(array)];
+      randomIndex = getRandomIndex(array);
+      randomItem = array[randomIndex];
     }
 
     return randomItem;

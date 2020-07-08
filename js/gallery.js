@@ -42,22 +42,22 @@ window.gallery = (function () {
   .querySelector('.picture');
   var picturesContainer = document.querySelector('.pictures');
 
-  window.filter.filters.default = function () {
+  window.filter.filters.default = window.debounce(function () {
     renderPhotos(photos);
-  };
+  });
 
-  window.filter.filters.random = function () {
+  window.filter.filters.random = window.debounce(function () {
     var randomPhotos = getRandomPhotos(photos);
     renderPhotos(randomPhotos);
-  };
+  });
 
-  window.filter.filters.discussed = function () {
+  window.filter.filters.discussed = window.debounce(function () {
     var discussedOrderPhotos = photos.slice().sort(function (left, right) {
       return right.comments.length - left.comments.length;
     });
 
     renderPhotos(discussedOrderPhotos);
-  };
+  });
 
   return {
     renderPhotos: renderPhotos,
