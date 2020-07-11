@@ -63,12 +63,12 @@ window.gallery = (function () {
   });
 
   window.filter.filters.random = window.debounce(function () {
-    var randomPhotos = getRandomPhotos(photos);
+    var randomPhotos = getRandomPhotos(defaultPhotos);
     renderPhotos(randomPhotos);
   });
 
   window.filter.filters.discussed = window.debounce(function () {
-    var discussedOrderPhotos = photos.slice().sort(function (left, right) {
+    var discussedOrderPhotos = defaultPhotos.slice().sort(function (left, right) {
       return right.comments.length - left.comments.length;
     });
 
