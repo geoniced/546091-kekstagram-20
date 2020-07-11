@@ -109,14 +109,22 @@ window.preview = (function () {
     hideComments();
   };
 
-  var createPictureContainerHandler = function (photos) {
-    picturesContainer.addEventListener('click', function (evt) {
-      var picture = evt.target.closest('.picture');
-      if (picture) {
-        evt.preventDefault();
-        showPicture(bigPicture, photos[picture.dataset.pictureId]);
-      }
-    });
+  var onPreviewClick = function (evt) {
+    var picture = evt.target.closest('.picture');
+    if (picture) {
+      evt.preventDefault();
+      var photos = window.gallery.getPhotos();
+      var photo = photos.find(function (item) {
+        return item.pictureId === +picture.dataset.pictureId;
+      });
+
+      showPicture(bigPicture, photo);
+    }
+  };
+
+  var createPictureContainerHandler = function () {
+    picturesContainer.removeEventListener('click', onPreviewClick);
+    picturesContainer.addEventListener('click', onPreviewClick);
   };
 
   return {
