@@ -3,9 +3,17 @@
 window.gallery = (function () {
   var RANDOM_PHOTOS_AMOUNT = 10;
 
+  var setPhotoId = function (item, index) {
+    item.pictureId = index;
+  };
+
   var onPhotosLoad = function (data) {
     photos = data;
-    renderPhotos(data);
+    defaultPhotos = photos;
+
+    photos.forEach(setPhotoId);
+
+    renderPhotos(photos);
     window.preview.createPictureContainerHandler(data);
     window.filter.showFilter();
   };
@@ -18,12 +26,14 @@ window.gallery = (function () {
   };
 
   var renderPhotos = function (newPhotos) {
+    photos = newPhotos;
     clearGallery();
 
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < newPhotos.length; i++) {
-      fragment.appendChild(window.picture.createPhotoElement(newPhotos[i], pictureTemplate, i));
+      var newPhoto = newPhotos[i];
+      fragment.appendChild(window.picture.createPhotoElement(newPhoto, pictureTemplate, newPhoto.pictureId));
     }
 
     picturesContainer.appendChild(fragment);
@@ -35,7 +45,12 @@ window.gallery = (function () {
     return randomPhotos;
   };
 
+  var getPhotos = function () {
+    return photos;
+  };
+
   var photos = [];
+  var defaultPhotos = photos;
 
   var pictureTemplate = document.querySelector('#picture')
   .content
@@ -43,16 +58,17 @@ window.gallery = (function () {
   var picturesContainer = document.querySelector('.pictures');
 
   window.filter.filters.default = window.debounce(function () {
+    photos = defaultPhotos;
     renderPhotos(photos);
   });
 
   window.filter.filters.random = window.debounce(function () {
-    var randomPhotos = getRandomPhotos(photos);
+    var randomPhotos = getRandomPhotos(defaultPhotos);
     renderPhotos(randomPhotos);
   });
 
   window.filter.filters.discussed = window.debounce(function () {
-    var discussedOrderPhotos = photos.slice().sort(function (left, right) {
+    var discussedOrderPhotos = defaultPhotos.slice().sort(function (left, right) {
       return right.comments.length - left.comments.length;
     });
 
@@ -61,6 +77,7 @@ window.gallery = (function () {
 
   return {
     renderPhotos: renderPhotos,
-    onPhotosLoad: onPhotosLoad
+    onPhotosLoad: onPhotosLoad,
+    getPhotos: getPhotos
   };
 })();
