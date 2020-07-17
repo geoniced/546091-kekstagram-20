@@ -247,6 +247,8 @@ window.form = (function () {
   var hashtagsCommentInput = document.querySelector('.text__description');
 
   uploadFileInput.addEventListener('change', function () {
+    window.fileUpload.createUploadFileLoaderHandler(uploadFileInput, imgUploadPreview);
+
     openImgEditPopup();
   });
 })();
