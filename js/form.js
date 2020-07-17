@@ -117,6 +117,8 @@ window.form = (function () {
 
     changeFilter(effectLevelInput.value, 'none');
 
+    window.scaleControl.createScaleHandlers(imgUploadPreview);
+
     document.addEventListener('keydown', onImgEditPopupPress);
     effectLevelPin.addEventListener('mousedown', onLevelPinMouseDown);
     effectsList.addEventListener('change', onEffectsChange);
@@ -128,6 +130,8 @@ window.form = (function () {
 
   var closeImgEditPopup = function () {
     imgUploadOverlay.classList.add('hidden');
+
+    window.scaleControl.removeScaleHandlers();
 
     document.removeEventListener('keydown', onImgEditPopupPress);
     effectLevelPin.removeEventListener('mousedown', onLevelPinMouseDown);
