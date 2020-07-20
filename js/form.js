@@ -175,7 +175,6 @@ window.form = (function () {
     imgUploadPreview.style.filter = filterData ? getFilterValue(filterData, percent) : '';
   };
 
-  // Пока мне кажется, что это достаточно удобно
   var setFilterLevel = function (percent) {
     effectLevelInput.value = Math.round(percent);
     effectLevelPin.style.left = percent + '%';

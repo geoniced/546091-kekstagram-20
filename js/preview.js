@@ -57,7 +57,6 @@ window.preview = (function () {
     document.addEventListener('keydown', onBigPicturePress);
 
     renderPictureInformation(picture, photo);
-    // hideComments();
   };
 
   var onPreviewClick = function (evt) {
