@@ -46,9 +46,7 @@ window.comments = (function () {
   };
 
   var updateCommentsCount = function (count) {
-    var commentsCount = count || 0;
-
-    commentsContainer.dataset.commentsRendered = commentsCount;
+    commentsContainer.dataset.commentsRendered = count || 0;
   };
 
   var populateComments = function (commentsFragment, item) {

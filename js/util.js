@@ -18,9 +18,8 @@ window.util = (function () {
 
   var getRandomIndex = function (array) {
     var length = array.length;
-    var index = Math.round(Math.random() * (length - 1));
 
-    return index;
+    return Math.round(Math.random() * (length - 1));
   };
 
   var getRandomItem = function (randomArray, array) {
